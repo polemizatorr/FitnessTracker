@@ -1,4 +1,6 @@
+using FitnessTracker.WebAPI.DatabaseContext;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.WebAPI.Controllers
 {
@@ -6,6 +8,7 @@ namespace FitnessTracker.WebAPI.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+
         private static readonly string[] Summaries = new[]
         {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"

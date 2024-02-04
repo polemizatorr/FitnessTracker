@@ -1,3 +1,7 @@
+using FitnessTracker.WebAPI.DatabaseContext;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<TrainingsContext>(
+        options => options.UseSqlServer("Server=localhost;Database=FitnessTracker;User Id=sa;Password=<YourStrong!Passw0rd>"));
 
 var app = builder.Build();
 
