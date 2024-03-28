@@ -12,18 +12,15 @@ namespace FitnessTracker.WebAPI.DatabaseContext
         }
 
         public DbSet<AerobicTraining> AerobicTrainings { get; set; }
-        public DbSet<Exercise> Exercises { get; set; }
         public DbSet<Set> Sets { get; set; }
         public DbSet<StrenghtTraining> StrenghtTrainings { get; set; }
-        public DbSet<TrainingToExercise> TrainingsToExercises { get; set; }
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TrainingToExercise>()
-                .HasNoKey();
 
-            modelBuilder.Entity<User>().HasData(new User("Tukan", "Tukan@vp.pl", "passwd",  "Domin",  "Czerniak", DateTime.Now));
+            /*modelBuilder.Entity<User>().HasData(new User("Tukan", "Tukan@vp.pl", "passwd",  "Domin",  "Czerniak", DateTime.Now));
+            modelBuilder.Entity<User>().HasData(new User("Adam123", "adam@vp.pl", "passwd", "Adam", "Wiśnia", DateTime.Now));*/
         }
 
     }

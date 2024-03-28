@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Entities.Models;
+using FitnessTracker.WebAPI.Entities.DTO;
 
 namespace FitnessTracker.WebAPI.Controllers.Users
 {
@@ -76,12 +77,14 @@ namespace FitnessTracker.WebAPI.Controllers.Users
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(CreateUserDTO user)
         {
-            _context.Users.Add(user);
+            var newUser = new User(user.UserName, user.Email, user.Password, user.FirstName, user.LastName);
+
+            _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+            return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
         }
 
         // DELETE: api/Users/5

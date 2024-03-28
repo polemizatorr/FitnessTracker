@@ -4,13 +4,14 @@
     {
         public Guid StrenghtTrainingId { get; set; }
         public Guid UserId { get; set; }
-        public Guid ExerciseId { get; set; }
+        public User? User { get; set; }
+        public IList<Set> Sets { get; set; }
 
-        public StrenghtTraining(Guid strenghtTrainingId, Guid userId, Guid exerciseId)
+        public StrenghtTraining(Guid strenghtTrainingId, Guid userId)
         {
             StrenghtTrainingId = strenghtTrainingId;
             UserId = userId;
-            ExerciseId = exerciseId;
+            Sets = new List<Set>();
         }
     }
 }

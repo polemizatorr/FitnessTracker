@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.WebAPI.Migrations
 {
     [DbContext(typeof(TrainingsContext))]
-    [Migration("20240204134801_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240225133749_SecondInitial")]
+    partial class SecondInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "6.0.27")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -30,11 +30,10 @@ namespace FitnessTracker.WebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<TimeSpan>("ActivityDuration")
-                        .HasColumnType("time");
+                    b.Property<int>("ActivityDurationMinutes")
+                        .HasColumnType("int");
 
                     b.Property<string>("ActivityType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CalorieBurnt")
@@ -51,33 +50,9 @@ namespace FitnessTracker.WebAPI.Migrations
 
                     b.HasKey("AerobicTrainingId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("AerobicTrainings");
-                });
-
-            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.Exercise", b =>
-                {
-                    b.Property<Guid>("ExerciseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ExaushtionLevel")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("SetId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("StrenghtTrainingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ExerciseId");
-
-                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.Set", b =>
@@ -90,10 +65,18 @@ namespace FitnessTracker.WebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ExhaustionLevel")
+                        .HasColumnType("int");
+
                     b.Property<int>("RepetitionsNumber")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("StrenghtTrainingId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("SetId");
+
+                    b.HasIndex("StrenghtTrainingId");
 
                     b.ToTable("Sets");
                 });
@@ -107,9 +90,6 @@ namespace FitnessTracker.WebAPI.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ExerciseId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("ModificationTime")
                         .HasColumnType("datetime2");
 
@@ -118,18 +98,9 @@ namespace FitnessTracker.WebAPI.Migrations
 
                     b.HasKey("StrenghtTrainingId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("StrenghtTrainings");
-                });
-
-            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.TrainingToExercise", b =>
-                {
-                    b.Property<Guid>("ExerciseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("StrenghtTrainingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.ToTable("TrainingsToExercises");
                 });
 
             modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.User", b =>
@@ -137,9 +108,6 @@ namespace FitnessTracker.WebAPI.Migrations
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -170,20 +138,51 @@ namespace FitnessTracker.WebAPI.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("cabe6989-a29b-4ce6-88c7-d9f75536c809"),
-                            BirthDate = new DateTime(2024, 2, 4, 14, 48, 1, 293, DateTimeKind.Local).AddTicks(5869),
-                            CreationDate = new DateTime(2024, 2, 4, 14, 48, 1, 293, DateTimeKind.Local).AddTicks(5901),
-                            Email = "Tukan@vp.pl",
-                            FirstName = "Domin",
-                            LastName = "Czerniak",
-                            ModificationTime = new DateTime(2024, 2, 4, 14, 48, 1, 293, DateTimeKind.Local).AddTicks(5903),
-                            Password = "passwd",
-                            UserName = "Tukan"
-                        });
+            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.AerobicTraining", b =>
+                {
+                    b.HasOne("FitnessTracker.WebAPI.Entities.Models.User", "User")
+                        .WithMany("AerobicTrainings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.Set", b =>
+                {
+                    b.HasOne("FitnessTracker.WebAPI.Entities.Models.StrenghtTraining", "StrenghtTraining")
+                        .WithMany("Sets")
+                        .HasForeignKey("StrenghtTrainingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StrenghtTraining");
+                });
+
+            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.StrenghtTraining", b =>
+                {
+                    b.HasOne("FitnessTracker.WebAPI.Entities.Models.User", "User")
+                        .WithMany("StrenghtTrainings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.StrenghtTraining", b =>
+                {
+                    b.Navigation("Sets");
+                });
+
+            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.User", b =>
+                {
+                    b.Navigation("AerobicTrainings");
+
+                    b.Navigation("StrenghtTrainings");
                 });
 #pragma warning restore 612, 618
         }
