@@ -10,3 +10,4 @@
 *.vsidx
 /Backend/FitnessTracker.WebAPI/.vs/FitnessTracker.WebAPI/v17
 *.bin
+/Backend/FitnessTracker.WebAPI/.vs
