@@ -1,5 +1,6 @@
 ﻿using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Entities.DTO;
+using FitnessTracker.WebAPI.Entities.Models;
 using FitnessTracker.WebAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,25 +22,25 @@ namespace FitnessTracker.WebAPI.Controllers.Security
         }
 
         [HttpPost]
-        [Route("token")]
+        [Route("register")]
         [AllowAnonymous]
-        public IResult GenerateToken([FromBody]UserDto user)
+        public IActionResult Register(RegisterUserDTO user)
         {
+            if (!isValidRegisterUserData(user)) return BadRequest(ModelState);
 
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new[]
-                    {
-                        new Claim("Username", user.Username),
-                    }),
-                    Expires = DateTime.UtcNow.AddMinutes(5),
+            var newUser = new User(user.UserName, user.Email, user.Password, user.FirstName, user.LastName);
 
-                };
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var stringToken = tokenHandler.WriteToken(token);
-                return Results.Ok(stringToken);
-           
+
+            try
+            {
+                _context.Users.Add(newUser);
+                _context.SaveChanges();
+                return Ok(newUser);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost]
@@ -72,6 +73,17 @@ namespace FitnessTracker.WebAPI.Controllers.Security
             }
 
             if (!loginUser.Password.Equals(user.Password)) return false;
+
+            return true;
+        }
+
+        private bool isValidRegisterUserData(RegisterUserDTO user)
+        {
+            if (!user.isvalidUserData()) return false;
+
+            var newUser = _context.Users.FirstOrDefault(u => u.UserName == user.UserName);
+
+            if (newUser != null) return false;
 
             return true;
         }

@@ -9,8 +9,8 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        public IList<StrenghtTraining> StrenghtTrainings { get; set; }
-        public IList<AerobicTraining> AerobicTrainings { get; set; }
+/*        public IList<StrengthTraining> StrenghtTrainings { get; set; }
+        public IList<AerobicTraining> AerobicTrainings { get; set; }*/
 
         public User(string userName, string email, string password, string firstName, string lastName) : base()
         {
@@ -20,8 +20,8 @@
             Password = password;
             FirstName = firstName;
             LastName = lastName;
-            StrenghtTrainings = new List<StrenghtTraining>();
-            AerobicTrainings = new List<AerobicTraining>();
+/*            StrenghtTrainings = new List<StrengthTraining>();
+            AerobicTrainings = new List<AerobicTraining>();*/
 
         }
     }

@@ -26,19 +26,6 @@ namespace FitnessTracker.WebAPI.Utility
                 expires: DateTime.Now.AddMinutes(60),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256));
 
-            /*
-             * var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(5),
-                Issuer = "FitnessTrackerISS",
-                Audience = "https://fitnestracker.com",
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-            };
-            */
-            // var token = tokenHandler.CreateToken(tokenDescriptor);
-            // var stringToken = tokenHandler.WriteToken(token);
-
             var stringToken = tokenHandler.WriteToken(token);
 
             return stringToken;

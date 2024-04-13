@@ -13,7 +13,7 @@ namespace FitnessTracker.WebAPI.DatabaseContext
 
         public DbSet<AerobicTraining> AerobicTrainings { get; set; }
         public DbSet<Set> Sets { get; set; }
-        public DbSet<StrenghtTraining> StrenghtTrainings { get; set; }
+        public DbSet<StrengthTraining> StrenghtTrainings { get; set; }
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

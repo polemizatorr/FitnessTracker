@@ -60,17 +60,24 @@ namespace FitnessTracker.WebAPI.Controllers
         // PUT: api/AerobicTrainings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAerobicTraining(Guid id, AerobicTraining aerobicTraining)
+        public async Task<IActionResult> PutAerobicTraining(Guid id, AerobicTrainingDto aerobicTraining)
         {
-            if (id != aerobicTraining.AerobicTrainingId)
+            var editTraining = _context.AerobicTrainings.Find(id);
+
+            if (editTraining == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(aerobicTraining).State = EntityState.Modified;
+            // _context.Entry(aerobicTraining).State = EntityState.Modified;
 
             try
             {
+                editTraining.ActivityDurationMinutes = aerobicTraining.ActivityDurationMinutes;
+                editTraining.CalorieBurnt = aerobicTraining.CalorieBurnt;
+                editTraining.ActivityType = aerobicTraining.ActivityType;
+                editTraining.ModificationTime = DateTime.UtcNow;
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
