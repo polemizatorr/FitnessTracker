@@ -18,6 +18,19 @@ namespace FitnessTracker.WebAPI.DatabaseContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<StrengthTraining>()
+            .HasMany(t => t.Sets)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Set>()
+            .HasOne(s => s.StrenghtTraining)       // Set has one StrengthTraining
+            .WithMany(st => st.Sets)               // StrengthTraining has many Sets
+            .HasForeignKey(s => s.StrenghtTrainingId)  // Use StrengthTrainingId as foreign key
+            .OnDelete(DeleteBehavior.Cascade);
+
+
+
 
             /*modelBuilder.Entity<User>().HasData(new User("Tukan", "Tukan@vp.pl", "passwd",  "Domin",  "Czerniak", DateTime.Now));
             modelBuilder.Entity<User>().HasData(new User("Adam123", "adam@vp.pl", "passwd", "Adam", "Wiśnia", DateTime.Now));*/

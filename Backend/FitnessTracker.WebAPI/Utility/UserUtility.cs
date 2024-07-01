@@ -23,7 +23,7 @@ namespace FitnessTracker.WebAPI.Utility
             var token = new JwtSecurityToken("FitnessTrackerISS",
                "https://fitnestracker.com",
                 claims,
-                expires: DateTime.Now.AddMinutes(60),
+                expires: DateTime.Now.AddMinutes(360),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256));
 
             var stringToken = tokenHandler.WriteToken(token);

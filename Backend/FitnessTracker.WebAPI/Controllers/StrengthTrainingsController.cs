@@ -27,24 +27,24 @@ namespace FitnessTracker.WebAPI.Controllers
 
         // GET: api/StrenghtTrainings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StrengthTraining>>> GetStrenghtTrainings()
+        public async Task<ActionResult<IEnumerable<StrengthTraining>>> GetStrengthTrainings()
         {
           if (_context.StrenghtTrainings == null)
           {
               return NotFound();
           }
-            return await _context.StrenghtTrainings.ToListAsync();
+            return await _context.StrenghtTrainings.Include(st => st.Sets).ToListAsync();
         }
 
         // GET: api/StrenghtTrainings/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<StrengthTraining>> GetStrenghtTraining(Guid id)
+        [HttpGet("{id}", Name = "GetStrengthTraining")]
+        public async Task<ActionResult<StrengthTraining>> GetStrengthTraining(Guid id)
         {
           if (_context.StrenghtTrainings == null)
           {
               return NotFound();
           }
-            var strenghtTraining = await _context.StrenghtTrainings.FindAsync(id);
+            var strenghtTraining = await _context.StrenghtTrainings.Include(st => st.Sets).FirstOrDefaultAsync(st => st.StrenghtTrainingId == id);
 
             if (strenghtTraining == null)
             {
@@ -57,7 +57,7 @@ namespace FitnessTracker.WebAPI.Controllers
         // PUT: api/StrenghtTrainings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStrenghtTraining(Guid id, List<SetDto> strenghtTrainingData)
+        public async Task<IActionResult> PutStrenghtTraining(Guid id, StrengthTrainingDTO strenghtTrainingData)
         {
             var editStrenghtTraining = _context.StrenghtTrainings.Include(st => st.Sets).SingleOrDefault(st => st.StrenghtTrainingId == id);
 
@@ -70,9 +70,9 @@ namespace FitnessTracker.WebAPI.Controllers
             {
                 editStrenghtTraining.Sets.Clear();
 
-                foreach (var data in strenghtTrainingData)
+                foreach (var data in strenghtTrainingData.Sets)
                 {
-                    var set = new Set(editStrenghtTraining.StrenghtTrainingId, data.RepetitionsNumber, data.ExerciseName, data.ExhaustionLevel);
+                    var set = new Set(editStrenghtTraining.StrenghtTrainingId, data.RepetitionsNumber, data.ExerciseName!, data.ExhaustionLevel, data.Weight);
                     editStrenghtTraining.Sets.Add(set);
                 }
                 await _context.SaveChangesAsync();
@@ -95,14 +95,14 @@ namespace FitnessTracker.WebAPI.Controllers
         // POST: api/StrenghtTrainings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<StrengthTraining>> PostStrenghtTraining(List<SetDto> strenghtTrainingData)
+        public async Task<ActionResult<StrengthTrainingDTO>> PostStrenghtTraining(StrengthTrainingDTO strenghtTrainingData)
         {
           if (_context.StrenghtTrainings == null)
           {
               return Problem("Entity set 'TrainingsContext.StrenghtTrainings'  is null.");
           }
 
-          if (strenghtTrainingData.Count == 0) 
+          if (strenghtTrainingData.Sets.Count == 0) 
           { 
               return BadRequest();
           }
@@ -115,11 +115,11 @@ namespace FitnessTracker.WebAPI.Controllers
                 throw new Exception("No user found for given username");
             }
 
-            var strenghtTraining = new StrengthTraining(userId);
+            var strenghtTraining = new StrengthTraining(userId, strenghtTrainingData.TrainingName!, strenghtTrainingData.TrainingDate);
 
-            foreach (var data in strenghtTrainingData)
+            foreach (var data in strenghtTrainingData.Sets)
             {
-                var set = new Set(strenghtTraining.StrenghtTrainingId, data.RepetitionsNumber, data.ExerciseName, data.ExhaustionLevel);
+                var set = new Set(strenghtTraining.StrenghtTrainingId, data.RepetitionsNumber, data.ExerciseName!, data.ExhaustionLevel, data.Weight);
                 strenghtTraining.Sets.Add(set);
             }
 
@@ -127,7 +127,7 @@ namespace FitnessTracker.WebAPI.Controllers
             _context.StrenghtTrainings.Add(strenghtTraining);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetStrenghtTraining", new { id = strenghtTraining.StrenghtTrainingId }, strenghtTraining);
+            return Created("GetStrengthTraining", new { id = strenghtTraining.StrenghtTrainingId });
         }
 
         // DELETE: api/StrenghtTrainings/5

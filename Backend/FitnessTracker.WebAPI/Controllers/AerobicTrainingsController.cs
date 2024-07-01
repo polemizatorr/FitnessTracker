@@ -28,7 +28,7 @@ namespace FitnessTracker.WebAPI.Controllers
 
         // GET: api/AerobicTrainings
         [HttpGet]
-        [Authorize]
+        // [Authorize]
         public async Task<ActionResult<IEnumerable<AerobicTraining>>> GetAerobicTrainings()
         {
           if (_context.AerobicTrainings == null)
@@ -98,6 +98,7 @@ namespace FitnessTracker.WebAPI.Controllers
         // POST: api/AerobicTrainings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<AerobicTraining>> PostAerobicTraining(AerobicTrainingDto aerobicTraining)
         {
           if (_context.AerobicTrainings == null)
