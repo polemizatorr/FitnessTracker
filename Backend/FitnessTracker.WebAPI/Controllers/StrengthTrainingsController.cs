@@ -9,6 +9,7 @@ using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Entities.Models;
 using FitnessTracker.WebAPI.Entities.DTO;
 using System.Security.Claims;
+using FitnessTracker.WebAPI.ApiResponse;
 
 namespace FitnessTracker.WebAPI.Controllers
 {
@@ -27,45 +28,131 @@ namespace FitnessTracker.WebAPI.Controllers
 
         // GET: api/StrenghtTrainings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StrengthTraining>>> GetStrengthTrainings()
+        public async Task<ApiResponse<IEnumerable<StrengthTrainingResponse>>> GetStrengthTrainings()
         {
           if (_context.StrenghtTrainings == null)
           {
-              return NotFound();
-          }
-            return await _context.StrenghtTrainings.Include(st => st.Sets).ToListAsync();
+                return new ApiResponse<IEnumerable<StrengthTrainingResponse>>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Trainings not defined",
+                    StatusCode = 404
+                };
+            }
+          var strengthTrainings = await _context.StrenghtTrainings.Include(st => st.Sets)
+                .Select(st => new StrengthTrainingResponse
+                {
+                    StrenghtTrainingId = st.StrenghtTrainingId,
+                    Sets = st.Sets,
+                    TrainingDate = st.TrainingDate,
+                    TrainingName = st.TrainingName,
+                })
+                
+                .ToListAsync();
+
+          return new ApiResponse<IEnumerable<StrengthTrainingResponse>>
+          {
+              IsSuccess = true,
+              StatusCode = 200,
+              Data = strengthTrainings,
+          };
+        }
+
+        // GET: api/StrenghtTrainings/user/username
+        [HttpGet("user/{username}")]
+        public async Task<ApiResponse<IEnumerable<StrengthTrainingResponse>>> GetStrengthTraining(string username)
+        {
+            if (_context.StrenghtTrainings == null)
+            {
+                return new ApiResponse<IEnumerable<StrengthTrainingResponse>>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Trainings not defined",
+                    StatusCode = 404
+                };
+            }
+
+            var userId = _context.Users?.FirstOrDefault(u => u.UserName == username)?.UserId;
+
+            var strenghtTraining = await _context.StrenghtTrainings
+                .Where(st => st.UserId == userId)
+                .Include(st => st.Sets)
+                .Select(st => new StrengthTrainingResponse
+                {
+                    StrenghtTrainingId = st.StrenghtTrainingId,
+                    Sets = st.Sets,
+                    TrainingDate = st.TrainingDate,
+                    TrainingName = st.TrainingName,
+                })
+                .ToListAsync();
+
+            if (strenghtTraining == null)
+            {
+                return new ApiResponse<IEnumerable<StrengthTrainingResponse>>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Training not found",
+                    StatusCode = 404
+                };
+            }
+
+            return new ApiResponse<IEnumerable<StrengthTrainingResponse>>
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Data = strenghtTraining,
+            };
         }
 
         // GET: api/StrenghtTrainings/5
         [HttpGet("{id}", Name = "GetStrengthTraining")]
-        public async Task<ActionResult<StrengthTraining>> GetStrengthTraining(Guid id)
+        public async Task<ApiResponse<StrengthTraining>> GetStrengthTraining(Guid id)
         {
           if (_context.StrenghtTrainings == null)
           {
-              return NotFound();
-          }
+                return new ApiResponse<StrengthTraining>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Trainings not defined",
+                    StatusCode = 404
+                };
+            }
             var strenghtTraining = await _context.StrenghtTrainings.Include(st => st.Sets).FirstOrDefaultAsync(st => st.StrenghtTrainingId == id);
 
             if (strenghtTraining == null)
             {
-                return NotFound();
+                return new ApiResponse<StrengthTraining>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Trainings not defined",
+                    StatusCode = 404
+                };
             }
 
-            return strenghtTraining;
+            return new ApiResponse<StrengthTraining>
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Data = strenghtTraining,
+            };
         }
 
         // PUT: api/StrenghtTrainings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStrenghtTraining(Guid id, StrengthTrainingDTO strenghtTrainingData)
+        public async Task<ApiResponse<StrengthTraining>> PutStrenghtTraining(Guid id, StrengthTrainingDTO strenghtTrainingData)
         {
             var editStrenghtTraining = _context.StrenghtTrainings.Include(st => st.Sets).SingleOrDefault(st => st.StrenghtTrainingId == id);
 
             if (editStrenghtTraining == null)
             {
-                return NotFound();
+                return new ApiResponse<StrengthTraining>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Trainings not found",
+                    StatusCode = 404
+                };
             }
-
             try
             {
                 editStrenghtTraining.Sets.Clear();
@@ -81,7 +168,12 @@ namespace FitnessTracker.WebAPI.Controllers
             {
                 if (!StrenghtTrainingExists(id))
                 {
-                    return NotFound();
+                    return new ApiResponse<StrengthTraining>
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Trainings not found",
+                        StatusCode = 404
+                    };
                 }
                 else
                 {
@@ -89,30 +181,44 @@ namespace FitnessTracker.WebAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return new ApiResponse<StrengthTraining>
+            {
+                IsSuccess = true,
+                StatusCode = 204,
+            };
         }
 
         // POST: api/StrenghtTrainings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<StrengthTrainingDTO>> PostStrenghtTraining(StrengthTrainingDTO strenghtTrainingData)
+        public async Task<ApiResponse<StrengthTraining>> PostStrenghtTraining(StrengthTrainingDTO strenghtTrainingData)
         {
           if (_context.StrenghtTrainings == null)
           {
-              return Problem("Entity set 'TrainingsContext.StrenghtTrainings'  is null.");
-          }
+                return new ApiResponse<StrengthTraining>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Trainings not found",
+                    StatusCode = 404
+                };
+            }
 
-          if (strenghtTrainingData.Sets.Count == 0) 
+          /*if (strenghtTrainingData.Sets.Count == 0) 
           { 
               return BadRequest();
-          }
+          }*/
 
             var username = _http.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var userId = _context.Users.First(u => u.UserName == username).UserId;
 
             if (userId == Guid.Empty)
             {
-                throw new Exception("No user found for given username");
+                return new ApiResponse<StrengthTraining>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "User not found",
+                    StatusCode = 404
+                };
             }
 
             var strenghtTraining = new StrengthTraining(userId, strenghtTrainingData.TrainingName!, strenghtTrainingData.TrainingDate);
@@ -127,27 +233,46 @@ namespace FitnessTracker.WebAPI.Controllers
             _context.StrenghtTrainings.Add(strenghtTraining);
             await _context.SaveChangesAsync();
 
-            return Created("GetStrengthTraining", new { id = strenghtTraining.StrenghtTrainingId });
+            return new ApiResponse<StrengthTraining>
+            {
+                IsSuccess = true,
+                StatusCode = 205,
+                Data = strenghtTraining,
+            };
         }
 
         // DELETE: api/StrenghtTrainings/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStrenghtTraining(Guid id)
+        public async Task<ApiResponse<StrengthTraining>> DeleteStrenghtTraining(Guid id)
         {
             if (_context.StrenghtTrainings == null)
             {
-                return NotFound();
+                return new ApiResponse<StrengthTraining>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Trainings not defined",
+                    StatusCode = 404
+                };
             }
             var strenghtTraining = await _context.StrenghtTrainings.FindAsync(id);
             if (strenghtTraining == null)
             {
-                return NotFound();
+                return new ApiResponse<StrengthTraining>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Training not found",
+                    StatusCode = 404
+                };
             }
 
             _context.StrenghtTrainings.Remove(strenghtTraining);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return new ApiResponse<StrengthTraining>
+            {
+                IsSuccess = true,
+                StatusCode = 204
+            };
         }
 
         private bool StrenghtTrainingExists(Guid id)

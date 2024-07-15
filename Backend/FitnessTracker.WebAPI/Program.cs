@@ -29,6 +29,22 @@ builder.Services.AddControllers()
         options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
     });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+
+            builder.WithOrigins("http://localhost:3000")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
