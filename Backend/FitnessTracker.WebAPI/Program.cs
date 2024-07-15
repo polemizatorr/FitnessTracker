@@ -84,6 +84,23 @@ builder.Services.AddMvc(options =>
 
 var app = builder.Build();
 
+// Apply migrations at startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<TrainingsContext>();
+        context.Database.Migrate();
+        context.Database.EnsureCreated();
+    }
+    catch (Exception ex)
+    {
+        // Log the error (you can use a logging framework here)
+        Console.WriteLine(ex.Message);
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
