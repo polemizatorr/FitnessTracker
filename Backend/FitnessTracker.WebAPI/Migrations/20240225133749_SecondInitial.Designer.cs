@@ -81,7 +81,7 @@ namespace FitnessTracker.WebAPI.Migrations
                     b.ToTable("Sets");
                 });
 
-            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.StrenghtTraining", b =>
+            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.StrengthTraining", b =>
                 {
                     b.Property<Guid>("StrenghtTrainingId")
                         .ValueGeneratedOnAdd()
@@ -153,16 +153,16 @@ namespace FitnessTracker.WebAPI.Migrations
 
             modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.Set", b =>
                 {
-                    b.HasOne("FitnessTracker.WebAPI.Entities.Models.StrenghtTraining", "StrenghtTraining")
+                    b.HasOne("FitnessTracker.WebAPI.Entities.Models.StrengthTraining", "StrengthTraining")
                         .WithMany("Sets")
                         .HasForeignKey("StrenghtTrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("StrenghtTraining");
+                    b.Navigation("StrengthTraining");
                 });
 
-            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.StrenghtTraining", b =>
+            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.StrengthTraining", b =>
                 {
                     b.HasOne("FitnessTracker.WebAPI.Entities.Models.User", "User")
                         .WithMany("StrenghtTrainings")
@@ -173,7 +173,7 @@ namespace FitnessTracker.WebAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.StrenghtTraining", b =>
+            modelBuilder.Entity("FitnessTracker.WebAPI.Entities.Models.StrengthTraining", b =>
                 {
                     b.Navigation("Sets");
                 });

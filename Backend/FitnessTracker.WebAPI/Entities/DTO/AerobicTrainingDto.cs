@@ -5,6 +5,9 @@
         public string? ActivityType { get; set; }
         public int ActivityDurationMinutes { get; set; }
         public int CalorieBurnt { get; set; }
+        public DateTime? ActivityDate { get; set; }
+
+        public Guid? AerobicTrainingId { get; set; }
 
         public AerobicTrainingDto() { }
 

@@ -4,6 +4,7 @@ using FitnessTracker.WebAPI.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.WebAPI.Migrations
 {
     [DbContext(typeof(TrainingsContext))]
-    partial class TrainingsContextModelSnapshot : ModelSnapshot
+    [Migration("20240629155933_Add-TrainingName-field")]
+    partial class AddTrainingNamefield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +29,6 @@ namespace FitnessTracker.WebAPI.Migrations
                     b.Property<Guid>("AerobicTrainingId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ActivityDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("ActivityDurationMinutes")
                         .HasColumnType("int");
