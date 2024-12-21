@@ -1,5 +1,4 @@
 ﻿using FitnessTracker.WebAPI.ApiResponse;
-using FitnessTracker.WebAPI.Cryptography;
 using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Entities.DTO;
 using FitnessTracker.WebAPI.Entities.Models;
@@ -36,9 +35,7 @@ namespace FitnessTracker.WebAPI.Controllers.Security
                     ErrorMessage = "Invalid Username"
                 };
 
-            var (hash, salt) = PasswordHasher.HashPassword(user.Password);
-
-            var newUser = new User(user.UserName, user.Email, hash, salt, user.FirstName, user.LastName);
+            var newUser = new User(user.UserName, user.Email, user.Password, user.FirstName, user.LastName);
 
 
             try
@@ -97,18 +94,12 @@ namespace FitnessTracker.WebAPI.Controllers.Security
             }
 
             var loginUser = _context.Users.FirstOrDefault(u => u.UserName == user.Username);
-
             if (loginUser == null)
             {
                 return false;
             }
 
-            else if (String.IsNullOrEmpty(loginUser.Password) || String.IsNullOrEmpty(loginUser.PasswordSalt))
-            {
-                return false;
-            }
-
-            if (!PasswordHasher.VerifyPassword(user.Password, loginUser.Password, loginUser.PasswordSalt)) return false;
+            if (!loginUser.Password.Equals(user.Password)) return false;
 
             return true;
         }
