@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Configuration;
+using System.Data.Entity;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -88,17 +89,26 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    try
+
+    var context = services.GetRequiredService<TrainingsContext>();
+    context.Database.Migrate();
+
+    var retries = 10;
+    while (retries > 0)
     {
-        var context = services.GetRequiredService<TrainingsContext>();
-        context.Database.Migrate();
-        context.Database.EnsureCreated();
+        try
+        {
+            context.Database.Migrate();
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Thread.Sleep(5000);
+            retries--;
+        }
     }
-    catch (Exception ex)
-    {
-        // Log the error (you can use a logging framework here)
-        Console.WriteLine(ex.Message);
-    }
+    
 }
 
 // Configure the HTTP request pipeline.
