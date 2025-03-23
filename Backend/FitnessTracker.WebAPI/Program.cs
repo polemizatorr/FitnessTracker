@@ -2,15 +2,12 @@ using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Repository;
 using FitnessTracker.WebAPI.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.DotNet.Scaffolding.Shared.ProjectModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Configuration;
-using System.Data.Entity;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -33,17 +30,12 @@ builder.Services.AddControllers()
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-
-            /*builder.WithOrigins("http://localhost:3000")
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();*/
-        });
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -51,8 +43,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
-builder.Services.AddDbContext<TrainingsContext>(
-        options => options.UseSqlServer(builder.Configuration["ConnectionStrings:FitnessDatabase"]));
+builder.Services.AddDbContext<TrainingsContext>(options =>
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:FitnessDatabase"]));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -65,8 +57,7 @@ builder.Services.AddAuthentication(options =>
     {
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey
-        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = false,
@@ -89,7 +80,6 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-
     var context = services.GetRequiredService<TrainingsContext>();
     context.Database.Migrate();
 
@@ -108,7 +98,6 @@ using (var scope = app.Services.CreateScope())
             retries--;
         }
     }
-    
 }
 
 // Configure the HTTP request pipeline.
@@ -118,10 +107,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(x => x
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
