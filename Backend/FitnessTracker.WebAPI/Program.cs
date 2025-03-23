@@ -2,6 +2,7 @@ using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Repository;
 using FitnessTracker.WebAPI.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.DotNet.Scaffolding.Shared.ProjectModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -30,6 +31,8 @@ builder.Services.AddControllers()
         options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
     });
 
+var prodFrontendUrl = builder.Configuration["CORS:UI"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -40,6 +43,10 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
 
             builder.WithOrigins("http://localhost:3000")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+
+            builder.WithOrigins(prodFrontendUrl)
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
