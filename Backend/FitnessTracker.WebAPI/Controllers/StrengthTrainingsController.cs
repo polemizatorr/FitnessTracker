@@ -10,6 +10,7 @@ using FitnessTracker.WebAPI.Entities.Models;
 using FitnessTracker.WebAPI.Entities.DTO;
 using System.Security.Claims;
 using FitnessTracker.WebAPI.ApiResponse;
+using System.Text.Json;
 
 namespace FitnessTracker.WebAPI.Controllers
 {
@@ -19,6 +20,9 @@ namespace FitnessTracker.WebAPI.Controllers
     {
         private readonly TrainingsContext _context;
         private readonly IHttpContextAccessor _http;
+
+        private readonly string ExportContentType = "application/json";
+        private readonly string DefaultExportFileName = "Strength Trainings.json";
 
         public StrengthTrainingsController(TrainingsContext context, IHttpContextAccessor httpContextAccessor)
         {
@@ -273,6 +277,75 @@ namespace FitnessTracker.WebAPI.Controllers
                 IsSuccess = true,
                 StatusCode = 204
             };
+        }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> exportTrainings() // string dateFrom, string dateTo
+        {
+            /*if (!DateTime.TryParse(dateFrom, out DateTime startDate) || !DateTime.TryParse(dateTo, out DateTime endDate))
+            {
+                var errorResponse = new ApiResponse<string>
+                {
+                    IsSuccess = false,
+                    Data = null,
+                    ErrorMessage = "Date conversion error",
+                    StatusCode = 400
+                };
+
+                return BadRequest(errorResponse);
+            }*/
+
+            var username = _http.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (username == null)
+            {
+                var errorResponse = new ApiResponse<string>
+                {
+                    IsSuccess = false,
+                    Data = null,
+                    ErrorMessage = "Failed to find user",
+                    StatusCode = 400
+                };
+
+                return BadRequest(errorResponse);
+            }
+            var userId = _context.Users.First(u => u.UserName == username).UserId;
+
+            var trainings = await _context.StrenghtTrainings.Include(t => t.Sets).Where(t => t.UserId == userId).ToListAsync();
+
+            if (!trainings.Any())
+            {
+                var errorResponse = new ApiResponse<string>
+                {
+                    IsSuccess = false,
+                    Data = null,
+                    ErrorMessage = "No trainings found to export",
+                    StatusCode = 400
+                };
+
+                return BadRequest(errorResponse);
+            }
+            try
+            {
+                var x = trainings.Select(t => t.ToDto()).ToList();
+                // var trainingsData = trainings.Select(t => t.ToDto()).ToList();
+            }
+            catch (Exception ex)
+            {
+                var x = 1;
+            }
+
+            var trainingsData = trainings.Select(t => t.ToDto()).ToList();
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true // Enable pretty formatting
+            };
+
+            var exportData = JsonSerializer.Serialize(trainingsData, options);
+            var fileBytes = System.Text.Encoding.UTF8.GetBytes(exportData);
+
+            Response.Headers.Add("Content-Disposition", "attachment; filename=Aerobic Trainings.json");
+            return File(fileBytes, ExportContentType, DefaultExportFileName);
         }
 
         private bool StrenghtTrainingExists(Guid id)

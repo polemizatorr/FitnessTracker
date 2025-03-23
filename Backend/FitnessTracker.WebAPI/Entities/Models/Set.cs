@@ -1,4 +1,6 @@
-﻿namespace FitnessTracker.WebAPI.Entities.Models
+﻿using FitnessTracker.WebAPI.Entities.DTO;
+
+namespace FitnessTracker.WebAPI.Entities.Models
 {
     public class Set
     {
@@ -28,6 +30,17 @@
             ExerciseName = exerciseName;
             ExhaustionLevel = exhaustionLevel;
             Weight = weight;
+        }
+
+        public SetDto ToDto()
+        {
+            return new SetDto
+            {
+                ExerciseName = this.ExerciseName,
+                RepetitionsNumber = this.RepetitionsNumber,
+                ExhaustionLevel = this.ExhaustionLevel,
+                Weight = this.Weight
+            };
         }
     }
 }

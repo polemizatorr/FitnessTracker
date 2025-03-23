@@ -1,4 +1,6 @@
-﻿namespace FitnessTracker.WebAPI.Entities.Models
+﻿using FitnessTracker.WebAPI.Entities.DTO;
+
+namespace FitnessTracker.WebAPI.Entities.Models
 {
     public class AerobicTraining : Entity
     {
@@ -20,6 +22,18 @@
             ActivityDurationMinutes = activityDurationMinutes;
             CalorieBurnt = calorieBurnt;
             ActivityDate = activityDate;
+        }
+
+        public AerobicTrainingDto ToDto()
+        {
+            return new AerobicTrainingDto
+            {
+                ActivityDate = this.ActivityDate,
+                ActivityType = this.ActivityType,
+                ActivityDurationMinutes = this.ActivityDurationMinutes,
+                CalorieBurnt = this.CalorieBurnt,
+                AerobicTrainingId = this.AerobicTrainingId,
+            };
         }
     }
 }

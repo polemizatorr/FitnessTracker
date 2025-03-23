@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FitnessTracker.WebAPI.Entities.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace FitnessTracker.WebAPI.Entities.Models
 {
@@ -10,7 +11,7 @@ namespace FitnessTracker.WebAPI.Entities.Models
         public User? User { get; set; }
         public string TrainingName { get; set; }
         public DateTime TrainingDate { get; set; }
-        public IList<Set> Sets { get; set; }
+        public List<Set> Sets { get; set; }
 
         public StrengthTraining(Guid userId, string trainingName, DateTime trainingDate)
         {
@@ -21,13 +22,23 @@ namespace FitnessTracker.WebAPI.Entities.Models
             TrainingDate = trainingDate;
         }
 
-        public StrengthTraining(Guid userId, IList<Set> sets, string trainingName, DateTime trainingDate)
+        public StrengthTraining(Guid userId, List<Set> sets, string trainingName, DateTime trainingDate)
         {
             StrenghtTrainingId = new Guid();
             UserId = userId;
             Sets = sets;
             TrainingName = trainingName;
             TrainingDate = trainingDate;
+        }
+
+        public StrengthTrainingDTO ToDto()
+        {
+            return new StrengthTrainingDTO
+            {
+                Sets = Sets.Select(s => s.ToDto()).ToList(),
+                TrainingName = this.TrainingName,
+                TrainingDate = this.TrainingDate,
+            };
         }
     }
 }
