@@ -24,7 +24,6 @@ namespace FitnessTracker.WebAPI.Controllers
             _http = httpContextAccessor;
         }
 
-        // GET: api/<SetsController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Set>>> GetSetsForTrining(Guid trainingId)
         {
@@ -36,14 +35,6 @@ namespace FitnessTracker.WebAPI.Controllers
             return await _context.Sets.Where(s => s.StrenghtTrainingId == trainingId).ToListAsync();
         }
 
-        // GET api/<SetsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<SetsController>
         [HttpPost("{strengthTrainingId}")]
         [EnableCors("AllowAll")]
         public async Task<ActionResult<Set>> CreateSet(Guid strengthTrainingId, SetDto set)
@@ -68,13 +59,11 @@ namespace FitnessTracker.WebAPI.Controllers
             return CreatedAtAction("CreateSet", new { id = newSet.SetId }, set);
         }
 
-        // PUT api/<SetsController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<SetsController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSet(Guid id)
         {
