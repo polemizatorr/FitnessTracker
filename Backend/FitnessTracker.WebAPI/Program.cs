@@ -1,15 +1,11 @@
 using FitnessTracker.WebAPI.DatabaseContext;
-using FitnessTracker.WebAPI.Repository;
 using FitnessTracker.WebAPI.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.DotNet.Scaffolding.Shared.ProjectModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -45,7 +41,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
@@ -74,7 +69,6 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<UserRepository>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddMvc(options =>
@@ -88,17 +82,26 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    try
+
+    var context = services.GetRequiredService<TrainingsContext>();
+    context.Database.Migrate();
+
+    var retries = 10;
+    while (retries > 0)
     {
-        var context = services.GetRequiredService<TrainingsContext>();
-        context.Database.Migrate();
-        context.Database.EnsureCreated();
+        try
+        {
+            context.Database.Migrate();
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Thread.Sleep(5000);
+            retries--;
+        }
     }
-    catch (Exception ex)
-    {
-        // Log the error (you can use a logging framework here)
-        Console.WriteLine(ex.Message);
-    }
+    
 }
 
 // Configure the HTTP request pipeline.
