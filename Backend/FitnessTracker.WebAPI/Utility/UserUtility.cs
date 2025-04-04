@@ -9,19 +9,23 @@ namespace FitnessTracker.WebAPI.Utility
 {
     public class UserUtility
     {
-        private const string _tokenSecret = "QLLJuCyxYFLqgkzDrBqq0o1ObZD1ZamK";
-        public static string GenerateToken(string username)
+        public static string GenerateToken(string username, IConfiguration config)
         {
+            var tokenSecretKey = config["JWT:Key"];
+            var tokenAudience = config["JWT:Audience"];
+            var tokenIssuer = config["JWT:Issuer"];
+
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_tokenSecret);
+            var key = Encoding.UTF8.GetBytes(tokenSecretKey);
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, username),
             };
 
-            var token = new JwtSecurityToken("FitnessTrackerISS",
-               "https://fitnestracker.com",
+            var token = new JwtSecurityToken(
+                tokenIssuer,
+                tokenAudience,
                 claims,
                 expires: DateTime.Now.AddMinutes(360),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256));

@@ -28,12 +28,6 @@ namespace FitnessTracker.WebAPI.DatabaseContext
             .WithMany(st => st.Sets)               // StrengthTraining has many Sets
             .HasForeignKey(s => s.StrenghtTrainingId)  // Use StrengthTrainingId as foreign key
             .OnDelete(DeleteBehavior.Cascade);
-
-
-
-
-            /*modelBuilder.Entity<User>().HasData(new User("Tukan", "Tukan@vp.pl", "passwd",  "Domin",  "Czerniak", DateTime.Now));
-            modelBuilder.Entity<User>().HasData(new User("Adam123", "adam@vp.pl", "passwd", "Adam", "Wiśnia", DateTime.Now));*/
         }
 
     }
