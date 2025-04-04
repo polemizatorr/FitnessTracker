@@ -27,9 +27,7 @@ namespace FitnessTracker.WebAPI.Controllers
             _http = httpContextAccessor; 
         }
 
-        // GET: api/AerobicTrainings
         [HttpGet]
-        // [Authorize]
         public async Task<ApiResponse<IEnumerable<AerobicTrainingDto>>> GetAerobicTrainings()
         {
           if (_context.AerobicTrainings == null)
@@ -59,9 +57,7 @@ namespace FitnessTracker.WebAPI.Controllers
             };
         }
 
-        // GET: api/AerobicTrainings/user/username
         [HttpGet("user/{username}")]
-        // [Authorize]
         public async Task<ApiResponse<IEnumerable<AerobicTrainingDto>>> GetAerobicTrainingsForUser(string username)
         {
             if (_context.AerobicTrainings == null)
@@ -92,7 +88,6 @@ namespace FitnessTracker.WebAPI.Controllers
             };
         }
 
-        // GET: api/AerobicTrainings/5
         [HttpGet("{id}")]
         public async Task<ApiResponse<AerobicTrainingDto>> GetAerobicTraining(Guid id)
         {
@@ -132,8 +127,6 @@ namespace FitnessTracker.WebAPI.Controllers
             };
         }
 
-        // PUT: api/AerobicTrainings/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<ApiResponse<AerobicTrainingDto>> PutAerobicTraining(Guid id, AerobicTrainingDto aerobicTraining)
         {
@@ -148,8 +141,6 @@ namespace FitnessTracker.WebAPI.Controllers
                     ErrorMessage = "Training Not Found",
                 };
             }
-
-            // _context.Entry(aerobicTraining).State = EntityState.Modified;
 
             try
             {
@@ -193,8 +184,6 @@ namespace FitnessTracker.WebAPI.Controllers
             };
         }
 
-        // POST: api/AerobicTrainings
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize]
         public async Task<ApiResponse<AerobicTrainingDto>> PostAerobicTraining(AerobicTrainingDto aerobicTraining)
@@ -243,7 +232,6 @@ namespace FitnessTracker.WebAPI.Controllers
             };
         }
 
-        // DELETE: api/AerobicTrainings/5
         [HttpDelete("{id}")]
         public async Task<ApiResponse<string>> DeleteAerobicTraining(Guid id)
         {
@@ -278,21 +266,8 @@ namespace FitnessTracker.WebAPI.Controllers
             };
         }
         [HttpGet("export")]
-        public async Task<IActionResult> exportTrainings() // string dateFrom, string dateTo
+        public async Task<IActionResult> exportTrainings()
         {
-            /*if (!DateTime.TryParse(dateFrom, out DateTime startDate) || !DateTime.TryParse(dateTo, out DateTime endDate))
-            {
-                var errorResponse = new ApiResponse<string>
-                {
-                    IsSuccess = false,
-                    Data = null,
-                    ErrorMessage = "Date conversion error",
-                    StatusCode = 400
-                };
-
-                return BadRequest(errorResponse);
-            }*/
-
             var username = _http.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (username == null)
             {
@@ -327,7 +302,7 @@ namespace FitnessTracker.WebAPI.Controllers
 
             var options = new JsonSerializerOptions
             {
-                WriteIndented = true // Enable pretty formatting
+                WriteIndented = true
             };
 
             var exportData = JsonSerializer.Serialize(trainingsData, options);

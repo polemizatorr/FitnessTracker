@@ -1,16 +1,11 @@
 using FitnessTracker.WebAPI.DatabaseContext;
-using FitnessTracker.WebAPI.Repository;
 using FitnessTracker.WebAPI.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.DotNet.Scaffolding.Shared.ProjectModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Configuration;
-using System.Data.Entity;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -46,7 +41,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
@@ -75,7 +69,6 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<UserRepository>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddMvc(options =>

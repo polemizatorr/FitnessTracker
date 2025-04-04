@@ -6,6 +6,7 @@ using FitnessTracker.WebAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -17,9 +18,11 @@ namespace FitnessTracker.WebAPI.Controllers.Security
     public class SecurityController : ControllerBase
     {
         private readonly TrainingsContext _context;
-        public SecurityController(TrainingsContext context) 
+        private readonly IConfiguration _configuration;
+        public SecurityController(TrainingsContext context, IConfiguration configuration) 
         { 
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -31,7 +34,7 @@ namespace FitnessTracker.WebAPI.Controllers.Security
                 return new ApiResponse<string>
                 {
                     IsSuccess = false,
-                    StatusCode = 400, // OK status code
+                    StatusCode = 400,
                     ErrorMessage = "Invalid Username"
                 };
 
@@ -45,7 +48,7 @@ namespace FitnessTracker.WebAPI.Controllers.Security
                 return new ApiResponse<string>
                 {
                     IsSuccess = true,
-                    StatusCode = 200, // OK status code
+                    StatusCode = 200,
                 };
             }
             catch (Exception ex)
@@ -53,7 +56,7 @@ namespace FitnessTracker.WebAPI.Controllers.Security
                 return new ApiResponse<string>
                 {
                     IsSuccess = false,
-                    StatusCode = 400, // OK status code
+                    StatusCode = 400,
                     ErrorMessage = ex.Message,
                 };
             }
@@ -69,19 +72,18 @@ namespace FitnessTracker.WebAPI.Controllers.Security
                 return new ApiResponse<string>
                 {
                     IsSuccess = false,
-                    StatusCode = 401, // OK status code
+                    StatusCode = 401,
                     ErrorMessage = "Invalid Credentials"
-                    
                 };
             }
 
-            var token = UserUtility.GenerateToken(user.Username);
+            var token = UserUtility.GenerateToken(user.Username, _configuration);
 
             return new ApiResponse<string>
             {
                 IsSuccess = true,
                 Data = token,
-                StatusCode = 200 // OK status code
+                StatusCode = 200
             };
 
         }
