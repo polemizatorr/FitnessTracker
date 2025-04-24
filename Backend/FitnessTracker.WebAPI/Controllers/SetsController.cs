@@ -1,6 +1,8 @@
-﻿using FitnessTracker.WebAPI.DatabaseContext;
+﻿using FitnessTracker.WebAPI.ApiResponse;
+using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Entities.DTO;
 using FitnessTracker.WebAPI.Entities.Models;
+using FitnessTracker.WebAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -17,22 +19,22 @@ namespace FitnessTracker.WebAPI.Controllers
     {
         private readonly TrainingsContext _context;
         private readonly IHttpContextAccessor _http;
+        private readonly ISetsService _service;
 
-        public SetsController(TrainingsContext context, IHttpContextAccessor httpContextAccessor)
+        public SetsController(TrainingsContext context, IHttpContextAccessor httpContextAccessor, ISetsService service)
         {
             _context = context;
             _http = httpContextAccessor;
+            _service = service;
+
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Set>>> GetSetsForTrining(Guid trainingId)
+        public ApiResponse<IEnumerable<Set>> GetSetsForTrining(Guid trainingId)
         {
-            if (_context.Sets == null)
-            {
-                return NotFound();
-            }
+            var response = _service.GetSetsForTrining(trainingId);
 
-            return await _context.Sets.Where(s => s.StrenghtTrainingId == trainingId).ToListAsync();
+            return response;
         }
 
         [HttpPost("{strengthTrainingId}")]
