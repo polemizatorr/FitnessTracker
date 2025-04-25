@@ -27,7 +27,7 @@ namespace UnitTests
                 .Build();
 
             _options = new DbContextOptionsBuilder<TrainingsContext>()
-            .UseInMemoryDatabase("TestDb")
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
         }
         [Fact]
