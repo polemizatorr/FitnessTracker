@@ -1,7 +1,6 @@
 ﻿using FitnessTracker.WebAPI.ApiResponse;
 using FitnessTracker.WebAPI.Entities.DTO;
 using FitnessTracker.WebAPI.Entities.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.WebAPI.Interfaces
 {
