@@ -4,7 +4,6 @@ using FitnessTracker.WebAPI.Entities.DTO;
 using FitnessTracker.WebAPI.Entities.Models;
 using FitnessTracker.WebAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.WebRequestMethods;
 using System.Security.Claims;
 
 namespace FitnessTracker.WebAPI.Services

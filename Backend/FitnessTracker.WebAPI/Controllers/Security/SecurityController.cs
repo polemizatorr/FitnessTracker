@@ -1,17 +1,8 @@
 ﻿using FitnessTracker.WebAPI.ApiResponse;
-using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Entities.DTO;
-using FitnessTracker.WebAPI.Entities.Models;
 using FitnessTracker.WebAPI.Interfaces;
-using FitnessTracker.WebAPI.Services;
-using FitnessTracker.WebAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace FitnessTracker.WebAPI.Controllers.Security
 {
