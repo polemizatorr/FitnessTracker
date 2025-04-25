@@ -130,10 +130,5 @@ namespace FitnessTracker.WebAPI.Controllers
             Response.Headers.Append("Content-Disposition", "attachment; filename=Aerobic Trainings.json");
             return File(fileBytes, ExportContentType, DefaultExportFileName);
         }
-
-        private bool StrenghtTrainingExists(Guid id)
-        {
-            return (_context.StrenghtTrainings?.Any(e => e.StrenghtTrainingId == id)).GetValueOrDefault();
-        }
     }
 }

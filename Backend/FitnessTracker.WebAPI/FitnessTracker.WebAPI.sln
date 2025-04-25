@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.WebAPI", "FitnessTracker.WebAPI.csproj", "{07A6D473-ED5A-4475-A381-D9F8620E7798}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FitnessTracker.WebAPI", "FitnessTracker.WebAPI.csproj", "{07A6D473-ED5A-4475-A381-D9F8620E7798}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FitnessTracker.UnitTests", "..\UnitTests\FitnessTracker.UnitTests.csproj", "{2621143D-D422-4EAC-A191-0040B0A95F1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{07A6D473-ED5A-4475-A381-D9F8620E7798}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07A6D473-ED5A-4475-A381-D9F8620E7798}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07A6D473-ED5A-4475-A381-D9F8620E7798}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2621143D-D422-4EAC-A191-0040B0A95F1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2621143D-D422-4EAC-A191-0040B0A95F1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2621143D-D422-4EAC-A191-0040B0A95F1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2621143D-D422-4EAC-A191-0040B0A95F1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
