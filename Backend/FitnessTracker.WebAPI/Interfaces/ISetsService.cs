@@ -7,11 +7,11 @@ namespace FitnessTracker.WebAPI.Interfaces
 {
     public interface ISetsService
     {
-        ApiResponse<IEnumerable<Set>> GetSetsForTrining(Guid trainingId);
+        ApiResponse<IEnumerable<Set>> GetSetsForTraining(Guid trainingId);
 
-        Task<ActionResult<Set>> CreateSet(Guid strengthTrainingId, SetDto set);
+        Task<ApiResponse<Set>> CreateSet(Guid strengthTrainingId, SetDto set);
 
-        Task<IActionResult> DeleteSet(Guid id);
+        Task<ApiResponse<Set>> DeleteSet(Guid id);
 
     }
 }
