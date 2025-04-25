@@ -2,10 +2,8 @@
 using FitnessTracker.WebAPI.Entities.DTO;
 using FitnessTracker.WebAPI.Entities.Models;
 using FitnessTracker.WebAPI.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FitnessTracker.WebAPI.ApiResponse;
-using System.Data.Entity;
 using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace FitnessTracker.WebAPI.Services
@@ -13,12 +11,10 @@ namespace FitnessTracker.WebAPI.Services
     public class UsersService : IUsersService
     {
         private readonly TrainingsContext _context;
-        private readonly IConfiguration _configuration;
 
-        public UsersService(TrainingsContext context, IConfiguration configuration)
+        public UsersService(TrainingsContext context)
         {
             _context = context;
-            _configuration = configuration;
         }
 
         public async Task<ApiResponse<User>> DeleteUser(Guid id)
