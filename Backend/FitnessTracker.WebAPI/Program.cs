@@ -1,4 +1,6 @@
 using FitnessTracker.WebAPI.DatabaseContext;
+using FitnessTracker.WebAPI.Interfaces;
+using FitnessTracker.WebAPI.Services;
 using FitnessTracker.WebAPI.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +46,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+builder.Services.AddScoped<ISecurityService, SecurityService>();
+builder.Services.AddScoped<IAerobicTrainingsService, AerobicTrainingsService>();
+builder.Services.AddScoped<ISetsService, SetsService>();
+builder.Services.AddScoped<IStrengthTrainingsService, StrengthTrainingsService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 
 builder.Services.AddDbContext<TrainingsContext>(
         options => options.UseSqlServer(builder.Configuration["ConnectionStrings:FitnessDatabase"]));
