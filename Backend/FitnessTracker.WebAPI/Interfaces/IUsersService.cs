@@ -16,5 +16,7 @@ namespace FitnessTracker.WebAPI.Interfaces
         Task<ApiResponse<User>> PutUser(Guid id, User user);
 
         Task<ApiResponse<User>> DeleteUser(Guid id);
+
+        Task<ApiResponse<User>> DeleteUserByUsername(string username);
     }
 }

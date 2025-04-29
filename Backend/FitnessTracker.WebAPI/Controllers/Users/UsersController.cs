@@ -64,5 +64,13 @@ namespace FitnessTracker.WebAPI.Controllers.Users
 
             return response;
         }
+
+        [HttpDelete("ByUsername/{username}")]
+        public async Task<ApiResponse<User>> DeleteUserByUsername(string username)
+        {
+            var response = await _service.DeleteUserByUsername(username);
+
+            return response;
+        }
     }
 }
