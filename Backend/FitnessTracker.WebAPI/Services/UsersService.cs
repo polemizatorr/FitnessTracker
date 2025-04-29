@@ -132,6 +132,30 @@ namespace FitnessTracker.WebAPI.Services
                 StatusCode = 204
             };
         }
+
+        public async Task<ApiResponse<User>> DeleteUserByUsername(string username)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+            if (user == null)
+            {
+                return new ApiResponse<User>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "User not found.",
+                    StatusCode = StatusCodes.Status404NotFound
+                };
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return new ApiResponse<User>
+            {
+                IsSuccess = true,
+                Data = user,
+                StatusCode = 204
+            };
+        }
         private bool UserExists(Guid id)
         {
             return _context.Users.Any(e => e.UserId == id);
