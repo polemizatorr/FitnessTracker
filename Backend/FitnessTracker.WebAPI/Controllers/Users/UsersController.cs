@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using FitnessTracker.WebAPI.DatabaseContext;
 using FitnessTracker.WebAPI.Entities.Models;
 using FitnessTracker.WebAPI.Entities.DTO;
+using FitnessTracker.WebAPI.Interfaces;
+using FitnessTracker.WebAPI.Services;
+using FitnessTracker.WebAPI.ApiResponse;
 
 namespace FitnessTracker.WebAPI.Controllers.Users
 {
@@ -15,97 +18,59 @@ namespace FitnessTracker.WebAPI.Controllers.Users
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly TrainingsContext _context;
+        private readonly IUsersService _service;
 
-        public UsersController(TrainingsContext context)
+        public UsersController(IUsersService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            return await _context.Users.ToListAsync();
-        }
-
-        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public async Task<ApiResponse<User>> GetUser(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var response = await _service.GetUser(id);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            return response;
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
+        [HttpGet]
+        public ApiResponse<IEnumerable<User>> GetUsers()
         {
-            if (id != user.UserId)
-            {
-                return BadRequest();
-            }
+            var response = _service.GetUsers();
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return response;
         }
 
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(CreateUserDTO user)
+        public async Task<ApiResponse<User>> PostUser(CreateUserDTO user)
         {
-            var newUser = new User(user.UserName, user.Email, user.Password, user.FirstName, user.LastName);
+            var response = await _service.PostUser(user);
 
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
+            return response;
         }
 
-        // DELETE: api/Users/5
+        [HttpPut("{id}")]
+        public async Task<ApiResponse<User>> PutUser(Guid id, User user)
+        {
+           var response = await _service.PutUser(id, user);
+
+            return response;
+        }
+
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<ApiResponse<User>> DeleteUser(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
+            var response = await _service.DeleteUser(id);
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return response;
         }
 
-        private bool UserExists(Guid id)
+        [HttpDelete("ByUsername/{username}")]
+        public async Task<ApiResponse<User>> DeleteUserByUsername(string username)
         {
-            return _context.Users.Any(e => e.UserId == id);
+            var response = await _service.DeleteUserByUsername(username);
+
+            return response;
         }
     }
 }
