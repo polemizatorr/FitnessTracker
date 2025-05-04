@@ -2,6 +2,7 @@
 {
     public class SetDto
     {
+        public Guid SetId { get; set; }
         public int RepetitionsNumber { get; set; }
         public string? ExerciseName { get; set; }
         public int ExhaustionLevel { get; set; }

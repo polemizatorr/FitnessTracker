@@ -93,6 +93,46 @@ namespace FitnessTracker.WebAPI.Services
             };
         }
 
+        public async Task<ApiResponse<Set>> EditSet(Guid setId, SetDto newSet)
+        {
+            if (_context.Sets == null)
+            {
+                return new ApiResponse<Set>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Sets collection is null.",
+                    StatusCode = StatusCodes.Status404NotFound
+                };
+            }
+
+            var set = await _context.Sets.FirstOrDefaultAsync(s => s.SetId == setId);
+
+            if (set == null)
+            {
+                return new ApiResponse<Set>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Sets collection is null.",
+                    StatusCode = StatusCodes.Status404NotFound
+                };
+            }
+
+            set.ExhaustionLevel = newSet.ExhaustionLevel;
+            set.ExerciseName = newSet.ExerciseName!;
+            set.Weight = newSet.Weight;
+            set.RepetitionsNumber = newSet.RepetitionsNumber;
+
+
+            await _context.SaveChangesAsync();
+
+            return new ApiResponse<Set>
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Data = set,
+            };
+        }
+
         public ApiResponse<IEnumerable<Set>> GetSetsForTraining(Guid trainingId)
         {
             if (_context.Sets == null)

@@ -216,13 +216,9 @@ namespace FitnessTracker.WebAPI.Services
             }
             try
             {
-                editStrenghtTraining.Sets.Clear();
+                editStrenghtTraining.TrainingDate = strenghtTrainingData.TrainingDate;
+                editStrenghtTraining.TrainingName = strenghtTrainingData.TrainingName;
 
-                foreach (var data in strenghtTrainingData.Sets)
-                {
-                    var set = new Set(editStrenghtTraining.StrenghtTrainingId, data.RepetitionsNumber, data.ExerciseName!, data.ExhaustionLevel, data.Weight);
-                    editStrenghtTraining.Sets.Add(set);
-                }
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

@@ -33,6 +33,14 @@ namespace FitnessTracker.WebAPI.Controllers
             return response;
         }
 
+        [HttpPut("{setId}")]
+        public async Task<ApiResponse<Set>> EditSet(Guid setId, SetDto set)
+        {
+            var response = await _service.EditSet(setId, set);
+
+            return response;
+        }
+
         [HttpDelete("{id}")]
         public async Task<ApiResponse<Set>> DeleteSet(Guid id)
         {

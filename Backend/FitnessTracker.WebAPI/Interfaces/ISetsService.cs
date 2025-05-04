@@ -11,6 +11,8 @@ namespace FitnessTracker.WebAPI.Interfaces
 
         Task<ApiResponse<Set>> CreateSet(Guid strengthTrainingId, SetDto set);
 
+        Task<ApiResponse<Set>> EditSet(Guid setID, SetDto set);
+
         Task<ApiResponse<Set>> DeleteSet(Guid id);
 
     }
