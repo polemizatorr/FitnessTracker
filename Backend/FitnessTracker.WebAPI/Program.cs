@@ -48,8 +48,11 @@ builder.Services.AddScoped<ISetsService, SetsService>();
 builder.Services.AddScoped<IStrengthTrainingsService, StrengthTrainingsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 
+var connectionString = builder.Configuration["ConnectionStrings:FitnessDatabase"]
+    ?? builder.Configuration.GetConnectionString("db_prod");
+
 builder.Services.AddDbContext<TrainingsContext>(
-        options => options.UseSqlServer(builder.Configuration["ConnectionStrings:FitnessDatabase"]));
+        options => options.UseSqlServer(connectionString));
 
 builder.Services.AddAuthentication(options =>
 {
